@@ -25,6 +25,7 @@ This is absolutely great.. simple, concise and communicates very useful informat
 Neither one of those options sounded great to me.  Which left me thinking about how it can be accomplished nicer.  After talking with a few people and looking at some existing options we came up with an idea.  What if we watched Ajax requests themselves, and were able to listen to specific methods and potentially the default REST actions?  Right, who couldn't like that idea?  It's very Rails-ish, and allows us room to play.
 
 Here's a simple example of how it could be used:
+
 <pre>
   Rails.resource('posts').
     show(function() {
@@ -153,6 +154,7 @@ h2. Examples
 Surrogate was written to be pretty flexible in how you implement using it.  It supports chaining, passing options, etc.. The following is a breakdown of how it can be used.
 
 h3. Passing options
+
 <pre>
   Rails.resource('posts', {
     index:   function() {},
@@ -170,6 +172,7 @@ h3. Passing options
 </pre>
 
 h3. Chaining with #add
+
 <pre>
   var r = Rails.resource('posts');
   r.add('index',       function() {});
@@ -184,6 +187,7 @@ h3. Chaining with #add
 </pre>
 
 h3. Chaining with actions/methods
+
 <pre>
   Rails.resource('posts').
     index(function() {}).
@@ -202,12 +206,14 @@ h2. Nested Resources & Namespacing
 Surrogate handles namespaces and nested resources.  It's just part of the resource you pass it, so for example, if I had something like posts/comments, I simply use the path to that resource.. eg. 'posts/:post_id/comments'
 
 h3. Nested resources
+
 <pre>
   Rails.resource('blogs/:blog_id/posts').
     index(function() {});
 </pre>
 
 h3. Namespaces
+
 <pre>
   Rails.resource('my_blog/admin/posts').
     index(function() {});
