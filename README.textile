@@ -1,12 +1,12 @@
 h1. Surrogate
 
-Surrogate is a restful resource Ajax "hijacker" that observes Ajax requests matching specific methods (get, put, post, delete) and paths.  It provides the ability to attach specific behaviors to any request that matches the given criteria.  It's designed to work the way Rails works by giving you a simple methodology for observing and handling remote forms and remote links.  It provides hooks for all the default controller actions (index, show, new, create, edit, update, and destroy), as well the ability to add members (get, put, post, delete actions) to a given resource.  It's intended to provide all that, but isn't solely restricted to it.
+Surrogate is a small (~100 lines) RESTful resource Ajax "hijacker" that observes Ajax requests matching specific methods (get, put, post, delete) and paths.  It's designed to work with Rails by providing hooks for all the default controller actions (index, show, new, create, edit, update, and destroy), as well the ability to add members (get, put, post, delete actions) to a given resource.  It's intended to provide all that, but isn't solely restricted to it.
 
-It's important to note that there's no requirements to get the routes or anything from rails, it expects you to define only what you want, where you want it.
+It's important to note that there's no requirements to get the routes or anything from rails, it expects you to define only what you want, where you want it -- all you have to do is use @link_to :remote => true@ (or form_for).
 
 h2. The Story
 
-I absolutely can't stand RJS and refuse to use it.  I prefer to keep all my Javascript in one place -- outside of my application, and structured in a sensible way for _Javascript_.  Javascript doesn't always retain a one to one relationship with server code, and because of that it seems important to provide simple and elegant ways to get them to interact nicely.
+I absolutely can't stand RJS and refuse to use it.  I prefer to keep all my Javascript in one place -- outside of my application, and structured in a sensible way for _Javascript_.  Javascript doesn't always retain a one to one relationship with server code, and because of that it seems important to have simple and elegant ways to get them to interact nicely.
 
 After working in Rails 3 for a little while I realized that there wasn't a great way to handle custom remote links and forms.. There's ways, but it's not especially elegant.  So, let's take a quick look at how you can accomplish this in Rails 3:
 
