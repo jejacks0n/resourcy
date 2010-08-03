@@ -12,7 +12,7 @@
   }
 
   function observeAjax(original, url) {
-    var method = this.options.method.toLowerCase(),
+    var method = (this.options.parameters['_method'] || this.options.method || 'post').toLowerCase(),
         urlParts = parseUrl(url),
         path = urlParts.path,
         action = urlParts.action,
