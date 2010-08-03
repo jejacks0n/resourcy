@@ -1,0 +1,220 @@
+h1. Surrogate
+
+Surrogate is a restful resource Ajax "hijacker" that observes Ajax requests matching specific methods (get, put, post, delete) and paths.  It provides the ability to attach specific behaviors to any request that matches the given criteria.  It's designed to work the way Rails works by giving you a simple methodology for observing and handling remote forms and remote links.  It provides hooks for all the default controller actions (index, show, new, create, edit, update, and destroy), as well the ability to add members (get, put, post, delete actions) to a given resource.  It's intended to provide all that, but isn't solely restricted to it.
+
+It's important to note that there's no requirements to get the routes or anything from rails, it expects you to define only what you want, where you want it.
+
+h2. The Story
+
+I absolutely can't stand RJS and refuse to use it.  I prefer to keep all my Javascript in one place -- outside of my application, and structured in a sensible way for _Javascript_.  Javascript doesn't always retain a one to one relationship with server code, and because of that it seems important to provide simple and elegant ways to get them to interact nicely.
+
+After working in Rails 3 for a little while I realized that there wasn't a great way to handle custom remote links and forms.. There's ways, but it's not especially elegant.  So, let's take a quick look at how you can accomplish this in Rails 3:
+
+Let's say we have a link that when clicked, updates some content elsewhere on the page based on a JSON response from the server.  In the view I can use the handy @link_to@ helper like so:
+
+<pre>
+link_to 'Activate Post', activate_post_path(@post), :remote => true
+</pre>
+
+This is absolutely great.. simple, concise and communicates very useful information to other developers (and myself 6 months down the road) that we're doing specific things with this link.  Now, with my aversion to RJS, I don't want to create an RJS response, cause really, I'd rather work with JSON.  So, there's two feasible options for that.
+
+1. We drop the @remote => true@ part and put an id on the link so we can find it and do the Ajax custom style.. which is ok, but doesn't communicate as clearly that there's stuff being handled on the client and that the controller should be responding to our link in a particular way.
+
+2. We (again) add an id to the link so we can find it, leaving the @remote => true@ intact.  The Javascript that comes with Rails 3 allows us to handle some of this stuff by firing custom events during the Ajax process, so (again) we find the element, attach some observers for "ajax:before" (maybe we want to animate in a loading indicator?), "ajax:success", "ajax:failure", and potentially more.  That gets the job done, but we have several bits of code that aren't really communicative of what's going on in Javascript now.
+
+Neither one of those options sounded great to me.  Which left me thinking about how it can be accomplished nicer.  After talking with a few people and looking at some existing options we came up with an idea.  What if we watched Ajax requests themselves, and were able to listen to specific methods and potentially the default REST actions?  Right, who couldn't like that idea?  It's very Rails-ish, and allows us room to play.
+
+Here's a simple example of how it could be used:
+<pre>
+  Rails.resource('posts').
+    show(function() {
+      return {
+        onSuccess: function() { alert('Yay!') }
+        onFailure: function() { alert('Boo!') }
+      }
+    });
+</pre>
+
+Simple and concise.. Now whenever a remote link is clicked with the path of /posts/1 and method of GET (PostsController#show) we get to handle it.  We can also put this code where it seems appropriate in the context that we might need it.  The best part is this is just the simplest example.
+
+h2. Installation
+
+It's expected that you have the default Rails setup (eg. prototype.js, and optionally rails.js) for now.. Support for jQuery and others will be added shortly.
+
+* Grab "surrogate.js":http://github.com/jejacks0n/surrogate/raw/master/public/distro/surrogate.js from the @public/distro@ path.
+* Optionally grab "prototype.js":http://github.com/jejacks0n/surrogate/raw/master/public/distro/lib/prototype.js from @public/distro/lib@.
+* Put them in your project and include them in your layout.
+
+h2. Usage
+
+Let's say you have a Posts class (assumes prototype, but the same is applicable with any object).  This "class" handles the user interface around browsing blog posts -- updating various elements on the page when you paginate through them etc.
+
+<pre>
+  Posts = Class.create({
+    initialize: function() {
+      this.display = $('post_display');
+    
+      Rails.resource('posts', {
+        index: this.loadPage.bind(this)
+      });
+    },
+  
+    loadPage: function() {
+      this.display.addClassname('loading');
+      return {
+      
+        onSuccess: function(response) {
+          this.display.removeClassname('loading');
+          this.display.update(response.responseText);
+        }.bind(this),
+      
+        onFailure: function() {
+          this.display.removeClassname('loading');
+          alert('Unable to load that page');
+        }
+
+      }
+    }
+  })
+</pre>
+
+Notice how we didn't observe any clicking on links or buttons?  We don't care about buttons anymore, because we don't have to.  Whenever an Ajax request to PostsController#index happens we can handle it how we want.  Since we're wanting to handle the index action on the PostsController we indicate that when we add it to the Rails.resource call.
+
+This means that we can put those pagination links wherever we want (let's assume they're in the post_display element for now), potentially add more, or change how they work.. without ever having to touch the client code!
+
+Now let's consider adding a show view for blog posts.  Currently when I click to view a specific blog post it takes me to the show view -- and when I click the back button I lose the page I was on.. So lame!  Let's just show the blog post on the page we're on, so we don't have to refresh the page.  We update our controller to respond to JSON, and do a little refactor in our constructor (so you can see a slightly different usage pattern) like so:
+
+<pre>
+  initialize: function() {
+    this.display = $('post_display');
+  
+    Rails.resource('posts').
+      index(this.loadPage.bind(this)).
+      show(this.loadDetail.bind(this));
+  },
+</pre>
+
+Notice we've added one line of javascript to handle the new action, no matter how many links may exist.. We don't have to find and observe any of them because it's happening for us.  Now it's simply a matter of adding @remote => true@ to a few links, writing a loadDetail method, and testing it.
+
+h2. Returning
+
+Your functions can return a few things to control what happens to the Ajax request after you've done your stuff.  Your function is called directly before the Ajax request is made, so you have control over if the Ajax request goes through or not, as well as what options it should use.
+
+h3. Returning false
+To keep the Ajax request from continuing simply return false.  This will stop the request, which let's you do custom confirm dialogs etc.  We'll use the example above as a starting point for some of these examples.
+
+<pre>
+  loadDetails: function() {
+    // you can stop the ajax request by returning false
+    return confirm('Are you sure?');
+  }
+</pre>
+
+h3. Returning Ajax options
+You can control the options the Ajax request will use by returning them.  This allows you to setup things like onSuccess and other callbacks.
+
+<pre>
+  loadDetails: function() {
+    // you can return an options object that will be used by the Ajax request
+    return {
+      onSuccess: function() { alert('You loaded the details!') }
+      onFailure: function() { alert("That post wasn't found") }
+    }
+  }
+</pre>
+
+h2. Arguments
+
+The functions you assign to the actions are passed a few arguments.. These are important because they give you a ton of flexibility.  The arguments passed are:
+
+* @proceed@ a callback function that can be called to continue the Ajax request (useful for animating before actually sending the request)
+* @pathVars@ variables that are from the path -- if the resource was 'blogs/:blog_id/posts' for example, this would be something like: {blog_id: '37'}
+
+<pre>
+  loadDetails: function(proceed, pathVars) {
+    // you can use the proceed function to pass as a callback or call it yourself
+    // if you pass it as a callback and it isn't called immediately you should return false so it isn't called for you
+    
+    // this will wait 10 seconds before making the actual ajax request
+    setTimeout(proceed({
+      onSuccess: function() {
+        alert('You loaded the details!');
+      },
+      onFailure: function() {
+        alert("That post wasn't found");
+      }
+    }), 10000);
+    return false;
+  }
+</pre>
+
+h2. Examples
+
+Surrogate was written to be pretty flexible in how you implement using it.  It supports chaining, passing options, etc.. The following is a breakdown of how it can be used.
+
+h3. Passing options
+<pre>
+  Rails.resource('posts', {
+    index:   function() {},
+    show:    function() {},
+    new:     function() {},
+    create:  function() {},
+    edit:    function() {},
+    update:  function() {},
+    destroy: function() {},
+    put: {
+      publish: function() {},
+      archive: function() {},
+    }
+  });
+</pre>
+
+h3. Chaining with #add
+<pre>
+  var r = Rails.resource('posts');
+  r.add('index',       function() {});
+  r.add('show',        function() {}).
+    add('new',         function() {}).
+    add('create',      function() {}).
+    add('edit',        function() {}).
+    add('update',      function() {}).
+    add('destroy',     function() {}).
+    add('put:publish', function() {}).
+    add('put:archive', function() {});
+</pre>
+
+h3. Chaining with actions/methods
+<pre>
+  Rails.resource('posts').
+    index(function() {}).
+    show(function() {}).
+    new(function() {}).
+    create(function() {}).
+    edit(function() {}).
+    update(function() {}).
+    destroy(function() {}).
+    put('publish', function() {}).
+    put('archive', function() {});
+</pre>
+
+h2. Nested Resources & Namespacing
+
+Surrogate handles namespaces and nested resources.  It's just part of the resource you pass it, so for example, if I had something like posts/comments, I simply use the path to that resource.. eg. 'posts/:post_id/comments'
+
+h3. Nested resources
+<pre>
+  Rails.resource('blogs/:blog_id/posts').
+    index(function() {});
+</pre>
+
+h3. Namespaces
+<pre>
+  Rails.resource('my_blog/admin/posts').
+    index(function() {});
+</pre>
+
+h2. Singular Resources
+
+Singular resources basically work the same way everything else does.  Surrogate doesn't really care if it's a singular resource or not.  What this means is that if you have a singular resource, the "show" actions is really the "index" action.. So instead of using show for singular resources just use index.
+
+h2. Enjoy. =)
