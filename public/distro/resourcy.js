@@ -28,7 +28,7 @@
           pathvars = resource.__pathvars__,
           f, matches, result, vars = {};
 
-      if (!(matches = path.match(resource.__path__))) continue;
+      if (!(matches = path && path.match(resource.__path__))) continue;
 
       var mAction = matches[matches.length - 2], mIdOrAction = matches[matches.length - 3];
       switch (method) {

@@ -1,6 +1,3 @@
-// Custom Rails routing/resource handling for ajax 
-// TODO: let's have a way to accomplish adding nicely to a window.Rails variable
-// TODO: basic get method on singular resource will go to index, and not to show.... does this impact other methods as well?
 (function() {
   var methods = ['get', 'put', 'post', 'delete'],
       actions = ['index', 'show', 'new', 'create', 'edit', 'update', 'destroy'];
@@ -31,7 +28,7 @@
           pathvars = resource.__pathvars__,
           f, matches, result, vars = {};
 
-      if (!(matches = path.match(resource.__path__))) continue;
+      if (!(matches = path && path.match(resource.__path__))) continue;
 
       var mAction = matches[matches.length - 2], mIdOrAction = matches[matches.length - 3];
       switch (method) {
@@ -98,6 +95,7 @@
   // TODO: add support for jQuery, mootools, YUI, Dojo, and ??
   Ajax.Request.prototype.request = Ajax.Request.prototype.request.wrap(observeAjax);
 
+  // TODO: let's have a way to accomplish adding nicely to a window.Rails variable
   var context = window.Rails = {
     resources: {},
     resource: function(path, actions) {

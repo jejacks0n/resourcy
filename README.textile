@@ -1,8 +1,8 @@
-h1. Surrogate
+h1. Resourcy
 
-Surrogate is a small (~100 lines) RESTful resource Ajax "hijacker" that observes Ajax requests matching specific methods (get, put, post, delete) and paths.  It's designed to work with Rails by providing hooks for all the default controller actions (index, show, new, create, edit, update, and destroy), as well the ability to add members (get, put, post, delete actions) to a given resource.  It's intended to provide all that, but isn't solely restricted to it.
+Resourcy is a small (~2.5k) RESTful resource Ajax "hijacker" that observes Ajax requests matching specific methods (get, put, post, delete) and paths.  It's designed to work with Rails 3 (with the default rails.js) by providing hooks for all the standard controller actions (index, show, new, create, edit, update, and destroy), as well the ability to add members (get, put, post, and delete actions) to a given resource.  It's intended to provide all that, but isn't solely restricted to it.
 
-It's important to note that there's no requirements to get the routes or anything from rails, it expects you to define only what you want, where you want it -- all you have to do is use @link_to :remote => true@ (or form_for).
+It's important to note that there's no requirements to get the routes or anything from Rails, it expects you to define only what you want, where you want it -- all you have to do is use @link_to :remote => true@ (or @form_for :remote => true@).
 
 h2. The Story
 
@@ -36,15 +36,14 @@ Here's a simple example of how it could be used:
     });
 </pre>
 
-Simple and concise.. Now whenever a remote link is clicked with the path of /posts/1 and method of GET (PostsController#show) we get to handle it.  We can also put this code where it seems appropriate in the context that we might need it.  The best part is this is just the simplest example.
+Simple and concise.. Now whenever a remote link is clicked with the path of /posts/1 and method of GET (PostsController#show) we get to handle it.  We can also put this code where it seems appropriate in the context that we might need it.  The best part is that this is just the simplest example.
 
 h2. Installation
 
-It's expected that you have the default Rails setup (eg. prototype.js, and optionally rails.js) for now.. Support for jQuery and others will be added shortly.
+It's expected that you have the default Rails setup (eg. prototype.js, and rails.js) for now.. Support for jQuery and others will be added as the needs arise.. Requests and feedback always helps.
 
-* Grab "surrogate.js":http://github.com/jejacks0n/surrogate/raw/master/public/distro/surrogate.js from the @public/distro@ path.
-* Optionally grab "prototype.js":http://github.com/jejacks0n/surrogate/raw/master/public/distro/lib/prototype.js from @public/distro/lib@.
-* Put them in your project and include them in your layout.
+* Grab "resourcy.js":http://github.com/jejacks0n/resourcy/raw/master/public/distro/resourcy.js or "resourcy.min.js":http://github.com/jejacks0n/resourcy/raw/master/public/distro/resourcy.min.js from the @public/distro@ path.
+* Put them in your project (/public/javascripts) and include them in your layout.
 
 h2. Usage
 
@@ -72,7 +71,7 @@ Let's say you have a Posts class (assumes prototype, but the same is applicable 
         onFailure: function() {
           this.display.removeClassname('loading');
           alert('Unable to load that page');
-        }
+        }.bind(this)
 
       }
     }
@@ -102,6 +101,7 @@ h2. Returning
 Your functions can return a few things to control what happens to the Ajax request after you've done your stuff.  Your function is called directly before the Ajax request is made, so you have control over if the Ajax request goes through or not, as well as what options it should use.
 
 h3. Returning false
+
 To keep the Ajax request from continuing simply return false.  This will stop the request, which let's you do custom confirm dialogs etc.  We'll use the example above as a starting point for some of these examples.
 
 <pre>
@@ -112,6 +112,7 @@ To keep the Ajax request from continuing simply return false.  This will stop th
 </pre>
 
 h3. Returning Ajax options
+
 You can control the options the Ajax request will use by returning them.  This allows you to setup things like onSuccess and other callbacks.
 
 <pre>
@@ -139,7 +140,7 @@ The functions you assign to the actions are passed a few arguments.. These are i
     // this will wait 10 seconds before making the actual ajax request
     setTimeout(proceed({
       onSuccess: function() {
-        alert('You loaded the details!');
+        alert('You loaded the details for ' + pathVars['blog_id'] + '!');
       },
       onFailure: function() {
         alert("That post wasn't found");
@@ -151,15 +152,17 @@ The functions you assign to the actions are passed a few arguments.. These are i
 
 h2. Examples
 
-Surrogate was written to be pretty flexible in how you implement using it.  It supports chaining, passing options, etc.. The following is a breakdown of how it can be used.
+Resourcy was written to be pretty flexible in how you implement using it.  It supports chaining, passing options, etc.. The following is a breakdown of how it can be used.
 
 h3. Passing options
+
+Notice that we have to wrap "new", and "delete", because those are javascript keywords.
 
 <pre>
   Rails.resource('posts', {
     index:   function() {},
     show:    function() {},
-    new:     function() {},
+    'new':     function() {},
     create:  function() {},
     edit:    function() {},
     update:  function() {},
@@ -167,6 +170,9 @@ h3. Passing options
     put: {
       publish: function() {},
       archive: function() {},
+    },
+    'delete' {
+      comments: function() {}
     }
   });
 </pre>
@@ -184,15 +190,18 @@ h3. Chaining with #add
     add('destroy',     function() {}).
     add('put:publish', function() {}).
     add('put:archive', function() {});
+    add('delete:comments', function() {});
 </pre>
 
 h3. Chaining with actions/methods
+
+Sadly there's no way to get new and delete to work well in this situation (because they're keywords).  Anybody have thoughts about using _new and _delete instead?
 
 <pre>
   Rails.resource('posts').
     index(function() {}).
     show(function() {}).
-    new(function() {}).
+    // new(function() {}). -- this won't work
     create(function() {}).
     edit(function() {}).
     update(function() {}).
@@ -203,7 +212,7 @@ h3. Chaining with actions/methods
 
 h2. Nested Resources & Namespacing
 
-Surrogate handles namespaces and nested resources.  It's just part of the resource you pass it, so for example, if I had something like posts/comments, I simply use the path to that resource.. eg. 'posts/:post_id/comments'
+Resourcy handles namespaces and nested resources.  It's just part of the resource you pass it, so for example, if I had something like posts/comments, I simply use the path to that resource.. eg. 'posts/:post_id/comments'
 
 h3. Nested resources
 
@@ -221,6 +230,6 @@ h3. Namespaces
 
 h2. Singular Resources
 
-Singular resources basically work the same way everything else does.  Surrogate doesn't really care if it's a singular resource or not.  What this means is that if you have a singular resource, the "show" actions is really the "index" action.. So instead of using show for singular resources just use index.
+Singular resources basically work the same way everything else does.  Resourcy doesn't really care if it's a singular resource or not.  What this means is that if you have a singular resource, the "show" actions is really the "index" action.. So instead of using show for singular resources just use index.  It was important to keep everything pretty simple and open, so if enough people mention it I'll probably make an alternate way to create singular resources.
 
 h2. Enjoy. =)
