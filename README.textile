@@ -171,7 +171,7 @@ Notice that we have to wrap "new", and "delete", because those are javascript ke
       publish: function() {},
       archive: function() {},
     },
-    'delete' {
+    'delete': {
       comments: function() {}
     }
   });
@@ -189,7 +189,7 @@ h3. Chaining with #add
     add('update',      function() {}).
     add('destroy',     function() {}).
     add('put:publish', function() {}).
-    add('put:archive', function() {});
+    add('put:archive', function() {}).
     add('delete:comments', function() {});
 </pre>
 
