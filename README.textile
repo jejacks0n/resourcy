@@ -18,11 +18,11 @@ link_to 'Activate Post', activate_post_path(@post), :remote => true
 
 This is absolutely great.. simple, concise and communicates very useful information to other developers (and myself 6 months down the road) that we're doing specific things with this link.  Now, with my aversion to RJS, I don't want to create an RJS response, cause really, I'd rather work with JSON.  So, there's two feasible options for that.
 
-1. We drop the @remote => true@ part and put an id on the link so we can find it and do the Ajax custom style.. which is ok, but doesn't communicate as clearly that there's stuff being handled on the client and that the controller should be responding to our link in a particular way.
+1. We drop the @remote => true@ part and put an id on the link so we can find it, observe clicks on it, and do the Ajax custom style.. which is ok, but doesn't communicate as clearly that there's stuff being handled on the client and that the controller should be responding to our link in a particular way.
 
-2. We (again) add an id to the link so we can find it, leaving the @remote => true@ intact.  The Javascript that comes with Rails 3 allows us to handle some of this stuff by firing custom events during the Ajax process, so (again) we find the element, attach some observers for "ajax:before" (maybe we want to animate in a loading indicator?), "ajax:success", "ajax:failure", and potentially more.  That gets the job done, but we have several bits of code that aren't really communicative of what's going on in Javascript now.
+2. We (again) add an id to the link so we can find it, leaving the @remote => true@ intact.  The Javascript that comes with Rails 3 allows us to handle some of the Ajax events by firing custom events during the Ajax process, so (again) we find the element, but instead of observing click, we attach some observers for "ajax:before" (maybe we want to animate in a loading indicator?), "ajax:success", "ajax:failure", and potentially more.  That gets the job done, but we have several bits of code that aren't really communicative of what's going on in Javascript now.
 
-Neither one of those options sounded great to me.  Which left me thinking about how it can be accomplished nicer.  After talking with a few people and looking at some existing options we came up with an idea.  What if we watched Ajax requests themselves, and were able to listen to specific methods and potentially the default REST actions?  Right, who couldn't like that idea?  It's very Rails-ish, and allows us room to play.
+Neither one of those options sounded great to me.  Which left me thinking about how it can be accomplished nicer.  After talking with a few people and looking at some existing options we came up with an idea.  What if we watched Ajax requests themselves, and were able to listen to specific methods and potentially handle the default REST actions?  Right, who couldn't like that idea?  It's very Rails-ish, and allows us room to play.. say using it outside of Rails for a Rack application.
 
 Here's a simple example of how it could be used:
 
@@ -40,10 +40,10 @@ Simple and concise.. Now whenever a remote link is clicked with the path of /pos
 
 h2. Installation
 
-It's expected that you have the default Rails setup (eg. prototype.js, and rails.js) for now.. Support for jQuery and others will be added as the needs arise.. Requests and feedback always helps.
+It's expected that you have the default Rails setup (eg. prototype.js, and rails.js) for now.. Support for jQuery and others will be added as the needs arise.. Requests and feedback always help inspire me to get something written even though I might not need it.
 
 * Grab "resourcy.js":http://github.com/jejacks0n/resourcy/raw/master/public/distro/resourcy.js or "resourcy.min.js":http://github.com/jejacks0n/resourcy/raw/master/public/distro/resourcy.min.js from the @public/distro@ path.
-* Put them in your project (/public/javascripts) and include them in your layout.
+* Put them in your project (/public/javascripts for instance) and include them in your layout.
 
 h2. Usage
 
