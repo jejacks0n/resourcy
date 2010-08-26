@@ -1,7 +1,10 @@
 (function() {
   var methods = ['get', 'put', 'post', 'delete'],
       actions = ['index', 'create', 'new', 'edit', 'show', 'update', 'destroy'];
-      route_discriptions = [['GET', ''], ['POST', ''], ['GET', '/new'], ['GET', '/:id/edit'], ['GET', '/:id'], ['PUT', '/:id'], ['DELETE', '/:id']];
+      route_discriptions = {
+        plural: [['get', ''], ['post', ''], ['get', '/new'], ['get', '/:id/edit'], ['get', '/:id'], ['put', '/:id'], ['delete', '/:id']],
+        singular: [null, ['post', ''], ['get', '/new'], ['get', '/edit'], ['get', ''], ['put', ''], ['delete', '']]
+      };
 
   function parseUrl(url) {
     var urlParts = url.match(/^((http[s]?|ftp):\/\/)?(((.+)@)?([^:\/\?#\s]+)(:(\d+))?)?(\/?[^\?#\.]+)?(\.([^\?#]+))?(\?([^#]?))?(#(.*))?$/i) || [];
@@ -62,7 +65,7 @@
 
   function createResource(path, singular) {
     if (this.resources[path]) return this.resources[path];
-    var i;
+    var i, errorMessage = "That action already exists on the '" + path + "' resource. Try removing it first.";
     return this.resources[path] = {
       __path__: new RegExp('^' + (path[0] == '/' ? path : '/' + path).replace(/:\w+/ig, '(\\w+)') + '/?(\\w+)?/?(\\w+)?/?($|\\?|\\.|#)', 'i'),
       __pathvars__: (path.match(/:(\w+)/ig) || []).join('|').replace(/:/g, '').split('|'),
@@ -70,9 +73,10 @@
       __singular__: singular,
       __add__: function(action, callback) {
         if (typeof (action) == 'string') {
-          if (this.__actions__[action]) throw("That action already exists on the '" + path + "' resource. Try removing it first.");
+          if (this.__actions__[action]) throw(errorMessage);
           this.__actions__[action] = callback;
         } else {
+          if (this.__actions__[action[0]][action[1]]) throw(errorMessage);
           this.__actions__[action[0]][action[1]] = callback;
         }
       },
@@ -104,16 +108,18 @@
     resources: {},
     resource: function(path, singular, actions) { return createResource.call(this, path, singular).add(actions || {}); },
     routes: function() {
-      var routes = [], route = '', i;
+      var routes = [], route = '', i, description, singular, name;
       for (var resource in this.resources) {
-        var name = resource.substr(resource.lastIndexOf('/') + 1);
+        singular = this.resources[resource].__singular__;
+        name = resource.substr(resource.lastIndexOf('/') + 1);
         for (i = 0; i < methods.length; i++) {
           for (var action in this.resources[resource].__actions__[methods[i]]) {
             routes.push(resource + '/' + action + ' ' + methods[i].toUpperCase() + ' => ' + name + '#' + action);
           }
         }
-        for (i = 0; i < actions.length; i++) {
-          route = resource + route_discriptions[i][1] + ' ' + route_discriptions[i][0] + ' => ' + name + '#' + actions[i];
+        for (i = singular ? 1 : 0; i < actions.length; i++) {
+          description = route_discriptions[singular ? 'singular' : 'plural'][i];
+          route = resource + description[1] + ' ' + description[0].toUpperCase() + ' => ' + name + '#' + actions[i];
           if (this.resources[resource].__actions__[actions[i]]) routes.push(route);
         }
       }
