@@ -1,6 +1,7 @@
 (function() {
   var methods = ['get', 'put', 'post', 'delete'],
-      actions = ['index', 'show', 'new', 'create', 'edit', 'update', 'destroy'];
+      actions = ['index', 'create', 'new', 'edit', 'show', 'update', 'destroy'];
+      route_discriptions = [['GET', ''], ['POST', ''], ['GET', '/new'], ['GET', '/:id/edit'], ['GET', '/:id'], ['PUT', '/:id'], ['DELETE', '/:id']];
 
   function parseUrl(url) {
     var urlParts = url.match(/^((http[s]?|ftp):\/\/)?(((.+)@)?([^:\/\?#\s]+)(:(\d+))?)?(\/?[^\?#\.]+)?(\.([^\?#]+))?(\?([^#]?))?(#(.*))?$/i) || [];
@@ -26,6 +27,7 @@
       var resource = context.resources[mapping],
           actions = resource.__actions__,
           pathvars = resource.__pathvars__,
+          singular = resource.__singular__,
           f, matches, result, vars = {};
 
       if (!(matches = path && path.match(resource.__path__))) continue;
@@ -36,7 +38,7 @@
           if (!(f = actions['get'][action])) {
             if (!mIdOrAction) action = '';
             switch (action) {
-              case '': f = actions['index']; break;
+              case '': f = singular ? actions['show'] : actions['index']; break;
               case 'new': f = actions['new']; break;
               case 'edit': f = actions['edit']; break;
               default: f = (!mAction) ? actions['show'] : false;
@@ -49,7 +51,7 @@
       }
 
       if (f) {
-        for (var i = 0; i < pathvars.length; i += 1) vars[pathvars[i]] = matches[i + 1];
+        for (var i = 0; i < pathvars.length; i++) vars[pathvars[i]] = matches[i + 1];
         result = f(proceed, vars, urlParts);
       }
       if (result !== false && !proceeded) proceed(result);
@@ -58,38 +60,40 @@
     if (!handled) return original(url);
   }
 
-  function currentResource(path) {
+  function createResource(path, singular) {
     if (this.resources[path]) return this.resources[path];
-    var i, resource = this.resources[path] = {
+    var i;
+    return this.resources[path] = {
       __path__: new RegExp('^' + (path[0] == '/' ? path : '/' + path).replace(/:\w+/ig, '(\\w+)') + '/?(\\w+)?/?(\\w+)?/?($|\\?|\\.|#)', 'i'),
       __pathvars__: (path.match(/:(\w+)/ig) || []).join('|').replace(/:/g, '').split('|'),
       __actions__: {},
+      __singular__: singular,
+      __add__: function(action, callback) {
+        if (typeof (action) == 'string') {
+          if (this.__actions__[action]) throw("That action already exists on the '" + path + "' resource. Try removing it first.");
+          this.__actions__[action] = callback;
+        } else {
+          this.__actions__[action[0]][action[1]] = callback;
+        }
+      },
       add: function(actionOrActions, callback, method) {
-        var myActions = this.__actions__;
-        if (typeof(actionOrActions) == 'string' && typeof(callback) == 'function') {
+        if (typeof (actionOrActions) == 'string' && typeof (callback) == 'function') {
           var action = actionOrActions.split(':');
-          if (action.length > 1) myActions[action[0]][action[1]] = callback;
-          else myActions[action[0]] = callback;
-        } else if (typeof(actionOrActions) == 'object') {
-          for (i = 0; i < methods.length; i += 1) { myActions[methods[i]] = actionOrActions[methods[i]] || myActions[methods[i]] || {}; }
-          for (i = 0; i < actions.length; i += 1) { myActions[actions[i]] = actionOrActions[actions[i]] || myActions[actions[i]]; }
+          if (action.length > 1) this.__add__([action[0], action[1]], callback);
+          else this.__add__(action[0], callback);
+        } else if (typeof actionOrActions == 'object') {
+          for (i = 0; i < methods.length; i++) { this.__actions__[methods[i]] = actionOrActions[methods[i]] || this.__actions__[methods[i]] || {} }
+          for (i = 0; i < actions.length; i++) { this.__actions__[actions[i]] = actionOrActions[actions[i]] || this.__actions__[actions[i]] }
         } else {
           throw('To add a resource you must provide: action or method:action, callback function - or - an object of actions/methods');
         }
         return this;
+      },
+      remove: function(action) {
+        action = action.split(':');
+        return (action.length > 1) ? delete this.__actions__[action[0]][action[1]] : delete this.__actions__[action[0]];
       }
     };
-    for (i = 0; i < actions.length; i += 1) {
-      resource[actions[i]] = (function(action) {
-        return function(callback) { return resource.add(action, callback) }
-      })(actions[i]);
-    }
-    for (i = 0; i < methods.length; i += 1) {
-      resource[methods[i]] = (function(method) {
-        return function(action, callback) { return resource.add(method + ':' + action, callback); }
-      })(methods[i]);
-    }
-    return resource;
   }
 
   // TODO: add support for jQuery, mootools, YUI, Dojo, and ??
@@ -98,8 +102,22 @@
   // TODO: let's have a way to accomplish adding nicely to a window.Rails variable
   var context = window.Rails = {
     resources: {},
-    resource: function(path, actions) {
-      return currentResource.call(this, path).add(actions || {});
+    resource: function(path, singular, actions) { return createResource.call(this, path, singular).add(actions || {}); },
+    routes: function() {
+      var routes = [], route = '', i;
+      for (var resource in this.resources) {
+        var name = resource.substr(resource.lastIndexOf('/') + 1);
+        for (i = 0; i < methods.length; i++) {
+          for (var action in this.resources[resource].__actions__[methods[i]]) {
+            routes.push(resource + '/' + action + ' ' + methods[i].toUpperCase() + ' => ' + name + '#' + action);
+          }
+        }
+        for (i = 0; i < actions.length; i++) {
+          route = resource + route_discriptions[i][1] + ' ' + route_discriptions[i][0] + ' => ' + name + '#' + actions[i];
+          if (this.resources[resource].__actions__[actions[i]]) routes.push(route);
+        }
+      }
+      return routes;
     }
   };
 })();

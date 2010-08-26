@@ -1,4 +1,4 @@
-var PostResource = {
+var POST_RESOURCE = {
   index: function() {
     return('PostsController#index');
   },
@@ -38,14 +38,6 @@ var PostResource = {
   put: {
     publish: function() {
       return 'PostsController#publish:PUT';
-//      return {
-//        onSuccess: function(response) {
-//          return 'PostsController#publish:success', response);
-//        },
-//        onFailure: function(response) {
-//          return 'PostsController#publish:failure', response);
-//        }
-//      }
     }
   }
 };

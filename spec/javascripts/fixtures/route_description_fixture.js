@@ -1,0 +1,17 @@
+var ROUTE_DESCRIPTION = '' +
+  'blogs/:blog_id/posts/comments GET => posts#comments\n' +
+  'blogs/:blog_id/posts/publish PUT => posts#publish\n' +
+  'blogs/:blog_id/posts/reorder POST => posts#reorder\n' +
+  'blogs/:blog_id/posts/comments DELETE => posts#comments\n' +
+  'blogs/:blog_id/posts GET => posts#index\n' +
+  'blogs/:blog_id/posts POST => posts#create\n' +
+  'blogs/:blog_id/posts/new GET => posts#new\n' +
+  'blogs/:blog_id/posts/:id/edit GET => posts#edit\n' +
+  'blogs/:blog_id/posts/:id GET => posts#show\n' +
+  'blogs/:blog_id/posts/:id PUT => posts#update\n' +
+  'blogs/:blog_id/posts/:id DELETE => posts#destroy\n' +
+  'blogs/:blog_id/posts/:post_id/comments/approve PUT => comments#approve\n' +
+  'blogs/:blog_id/posts/:post_id/comments GET => comments#index\n' +
+  'blogs/:blog_id/posts/:post_id/comments POST => comments#create\n' +
+  'blogs/:blog_id/posts/:post_id/comments/new GET => comments#new\n' +
+  'blogs/:blog_id/posts/:post_id/comments/:id DELETE => comments#destroy';
