@@ -10,7 +10,7 @@ describe("Rails.routes", function() {
   });
 
   it('returns an array of routes', function() {
-    Rails.resource('blogs/:blog_id/posts/:post_id/comments').add(COMMENT_RESOURCE);
+    Rails.resource('blogs/:blog_id/posts/:post_id/comment', true).add(COMMENT_RESOURCE);
 
     expect(Rails.routes().join('\n')).toEqual(ROUTE_DESCRIPTION);
   });
@@ -355,6 +355,12 @@ describe("Rails.resource", function() {
       this.r = Rails.resource('blogs/:blog_id/post', true).add(POST_RESOURCE);
       this.actions = this.r.__actions__;
       this.resourcePath = '/blogs/2/POST';
+    });
+
+    pending('does not handles the index action', function() {
+      this.r.add('index', this.func);
+      
+      expect(this.actions['index']).toEqual(undefined);
     });
 
     it('handles the show action', function() {
