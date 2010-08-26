@@ -115,9 +115,12 @@ h3. Namespacing
 
 h2. Singular Resources
 
-Singular resources basically work the same way everything else does.  Resourcy doesn't really care if it's a singular resource or, which means that if you have a singular resource, the "show" action is really the "index" action.. Since there's no way to tell Resourcy about this, you should use index instead of show singular resources.
+Singular resources basically work the same way everything else does.  The second argument of Rails.resource is a boolean for singular.  The only real difference with singular resources is that they have a show action where normally there's an index action, and there is no index action.  To specify something is a singular resource use:
 
-If enough people mention it I'll make an alternate way to create singular resources so it has a concept of that.
+<pre>
+  Rails.resource('posts/:post_id/author', true).
+    add('show', function() { alert('This will monitor GET to /posts/1/author') });
+</pre>
 
 h2. Adding actions
 
