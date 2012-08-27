@@ -1,5 +1,10 @@
-source :rubyforge
-source 'http://gems.github.com'
+source 'http://rubygems.org'
 
-gem 'jasmine', '0.11.1.0'
-gem 'packr', '3.1.0'
+# Dependencies for the dummy app
+gem 'rails', '3.2.8'
+gem 'jquery-rails'
+gem 'sqlite3'
+
+gem 'evergreen'
+
+gemspec

@@ -1,3 +1,0 @@
-jasmine.fixtures = {};
-
-jasmine.css = {};
