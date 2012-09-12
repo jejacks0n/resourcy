@@ -208,19 +208,17 @@ flexibility.  The arguments are:
 - `pathVars` variables that are from the path -- if the resource was 'blogs/:blog_id/posts' for example, this would be
   something like: `{blog_id: '42'}`
 
+      loadDetails: (proceed, pathVars) ->
+        # you can use the proceed function to pass as a callback or call it yourself
+        # if you pass it as a callback and it isn't called immediately you should return false so it isn't called for you
 
-
-    loadDetails: (proceed, pathVars) ->
-      # you can use the proceed function to pass as a callback or call it yourself
-      # if you pass it as a callback and it isn't called immediately you should return false so it isn't called for you
-
-      # this will wait 10 seconds before making the actual ajax request
-      setTimeout ->
-        proceed
-          success: -> alert('You loaded the details for ' + pathVars['blog_id'] + '!')
-          fail: -> alert('Post not found')
-      , 10000
-      return false
+        # this will wait 10 seconds before making the actual ajax request
+        setTimeout ->
+          proceed
+            success: -> alert('You loaded the details for ' + pathVars['blog_id'] + '!')
+            fail: -> alert('Post not found')
+        , 10000
+        return false
 
 ### Describing routes
 
