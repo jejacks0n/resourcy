@@ -8,9 +8,9 @@ It provides simple hooks for all the standard REST actions (index, show, new, cr
 the ability to add and remove members (get, put, post, and delete actions) on a given resource.  It's important to note
 that you're only defining routes you want to handle in javascript.
 
-You can add this behavior onto links and forms by setting a `data-remote="true"` attribute (The wiki covers more
-complex usage), and in Rails you can use the standard `:remote => true`.  Then just use Resourcy to hook into those
-actions.
+You can add this behavior onto links and forms by setting a `data-remote="true"` attribute, and in Rails you can use
+the standard `:remote => true`.  Then just use Resourcy to hook into those actions.  Read more about what's possible
+on the [jquery-ujs wiki](https://github.com/rails/jquery-ujs/wiki/Unobtrusive-scripting-support-for-jQuery).
 
 
 ## The Story
@@ -63,7 +63,7 @@ might need it.  The best part is that this is just the simplest example.
 
     gem 'resourcy'
 
-Then require resourcy (and jquery_ujs) in your application.js:
+Then require resourcy (and jquery-ujs) in your application.js:
 
     //= require jquery.resourcy
 
