@@ -17,4 +17,4 @@ coverage
 capybara*
 
 # Dummy app
-spec/dummy
+spec/dummy/log
