@@ -1,4 +1,19 @@
 #= require resourcy
+#
+# Resourcy Ajax adapter
+#
+# This overrides the default jQuery.ajax method and mixes in the logic required to make Resourcy work with the options
+# and arguments for the jQuery Ajax api.
+
+# Get the original jQuery.ajax and merge in some additional methods from Resourcy.
+original = jQuery.ajax
+jQuery.extend(jQuery, {originalAjax: original, resources: Resourcy.resources, resource: Resourcy.resource, routes: Resourcy.routes})
+
+# Remove Resourcy from the global namespace.
+handleRequest = Resourcy.handleRequest
+Resourcy.noConflict()
+
+# Define an options handler, that properly merges options for the Ajax request.
 optionsHandler = (opts1, opts2) ->
   options = jQuery.extend(true, {}, opts1, opts2)
   for method in ['beforeSend', 'error', 'dataFilter', 'success', 'complete']
@@ -10,10 +25,7 @@ optionsHandler = (opts1, opts2) ->
         c2.apply(window, arguments)
   return options
 
-original = jQuery.ajax
-handleRequest = Resourcy.handleRequest
-jQuery.extend(jQuery, {originalAjax: original, resources: Resourcy.resources, resource: Resourcy.resource, routes: Resourcy.routes})
-Resourcy.noConflict()
+# Create a new jQuery.ajax method that works with Resourcy.
 jQuery.ajax = (url, options = {}) ->
   if typeof(url) is 'object'
     options = url

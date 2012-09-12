@@ -1,5 +1,5 @@
 require '/assets/jquery-1.8.0.js'
-require '/assets/jquery-resourcy.js'
+require '/assets/jquery.resourcy.js'
 require '/assets/jquery_ujs.js'
 
 describe "Resourcy jQuery Adapter (1.8.0)", ->

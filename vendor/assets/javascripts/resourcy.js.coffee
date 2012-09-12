@@ -1,4 +1,4 @@
-# private resource list
+# resource list
 resources = {}
 
 # used to describe routes
