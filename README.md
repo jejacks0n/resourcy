@@ -56,7 +56,7 @@ might need it.  The best part is that this is just the simplest example.
 
 ## Installation
 
-- Download [jquery.resourcy.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery,resourcy.js) or [jquery.resourcy.min.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery_resourcy.min.js)
+- Download [jquery.resourcy.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery.resourcy.js) or [jquery.resourcy.min.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery.resourcy.min.js)
 - Put the files in your project use it wherever you might need it.
 
 ### Rails
@@ -203,9 +203,11 @@ The callbacks are passed a few arguments when they're called.  These are importa
 flexibility.  The arguments are:
 
 - `proceed` a callback function that can be called to continue the Ajax request (useful for animating or something
-before actually sending the request)
+  before actually sending the request)
+
 - `pathVars` variables that are from the path -- if the resource was 'blogs/:blog_id/posts' for example, this would be
-something like: {blog_id: '42'}
+  something like: {blog_id: '42'}
+
 
     loadDetails: (proceed, pathVars) ->
       # you can use the proceed function to pass as a callback or call it yourself
