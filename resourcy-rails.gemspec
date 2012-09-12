@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Jeremy Jackson']
   s.email       = ['jejacks0n@gmail.com']
   s.homepage    = 'http://github.com/jejacks0n/resourcy'
-  s.summary     = %Q{Resourcy: an unobtrusive RESTful adapter}
-  s.description = %Q{Resourcy is an unobtrusive RESTful adapter for jquery-ujs and Rails that allows javascript route handling}
+  s.summary     = %Q{Resourcy: Awesome RESTful javascript resource routing}
+  s.description = %Q{A RESTful javascript router that can be used with jquery-ujs and Rails for client route handling}
   s.licenses    = ['MIT']
 
 

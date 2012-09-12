@@ -61,7 +61,7 @@ might need it.  The best part is that this is just the simplest example.
 
 ### Rails
 
-    gem 'resourcy'
+    gem 'resourcy-rails'
 
 Then require resourcy (and jquery-ujs) in your application.js:
 
