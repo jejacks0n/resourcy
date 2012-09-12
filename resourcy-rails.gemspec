@@ -18,6 +18,12 @@ Gem::Specification.new do |s|
 
   # Runtime Dependencies
   s.add_dependency 'railties', '~> 3.2.8'
+  s.add_dependency 'coffee-rails'
+
+  # Development dependencies
+  s.add_development_dependency 'sprockets', '~> 2.1'
+  s.add_development_dependency 'uglifier'
+  s.add_development_dependency 'sprockets-rails'
 
   # Testing dependencies
   s.add_development_dependency 'evergreen', '>= 1.0.0'
