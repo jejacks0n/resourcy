@@ -56,7 +56,7 @@ namespace :resourcy do
         Dir[Resourcy::Engine.root.join('distro/build', base)].each do |filename|
           copy_file(filename, Resourcy::Engine.root.join("distro/#{base.gsub(/\*/, '')}"))
           minified = Uglifier.compile(File.read(filename))
-          File.open(Resourcy::Engine.root.join("distro/#{base.gsub(/\*/, '.min')}.js"), 'w') do |file|
+          File.open(Resourcy::Engine.root.join("distro/#{base.gsub(/\*/, '.min')}"), 'w') do |file|
             file.write(minified)
           end
           remove(filename)
