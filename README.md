@@ -206,7 +206,8 @@ flexibility.  The arguments are:
   before actually sending the request)
 
 - `pathVars` variables that are from the path -- if the resource was 'blogs/:blog_id/posts' for example, this would be
-  something like: {blog_id: '42'}
+  something like: `{blog_id: '42'}`
+
 
 
     loadDetails: (proceed, pathVars) ->
