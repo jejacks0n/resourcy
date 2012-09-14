@@ -1,7 +1,7 @@
 Dummy::Application.routes.draw do
   resources :posts
 
-  match 'blogs/:id/posts' => 'posts#index'
+  match '/blogs/:id/posts' => 'posts#index'
 
 
   # The priority is based upon order of creation:
