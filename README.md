@@ -48,7 +48,7 @@ very friendly, and allows us room to play.
 
 Here's a simple example of how it can be used (CoffeeScript):
 
-    $.resource('posts').add 'show', ->
+    $.resources('posts').add 'show', ->
       success: -> alert('Yay!')
       fail: -> alert('Boo!')
 
