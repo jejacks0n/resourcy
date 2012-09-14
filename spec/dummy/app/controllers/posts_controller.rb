@@ -4,7 +4,6 @@ class PostsController < ActionController::Base
   # GET /posts
   # GET /posts.json
   def index
-    puts Rails.env
     @posts = Post.all
 
     respond_to do |format|
