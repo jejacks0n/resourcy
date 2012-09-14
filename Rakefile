@@ -68,4 +68,10 @@ namespace :resourcy do
 
 end
 
+
+# Default
+# -----------------------------------------------------------------------------
+Rake::Task['default'].prerequisites.clear
+Rake::Task['default'].clear
+
 task :default => ['spec:javascripts']
