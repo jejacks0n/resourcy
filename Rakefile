@@ -71,7 +71,7 @@ end
 
 # Default
 # -----------------------------------------------------------------------------
-Rake::Task['default'].prerequisites.clear
-Rake::Task['default'].clear
+#Rake::Task['default'].prerequisites.clear
+#Rake::Task['default'].clear
 
 task :default => ['spec:javascripts']
