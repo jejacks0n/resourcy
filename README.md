@@ -4,8 +4,8 @@
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/jejacks0n/resourcy)
 
 Resourcy is a RESTful adapter that observes Ajax requests matching specific paths and methods and is meant to work with
-[jquery-ujs](https://github.com/rails/jquery-ujs).  It's intended to be useful anywhere, while also taking advantage of
-Rails conventions and the jquery-ujs library when possible.
+[jquery-ujs](https://github.com/rails/jquery-ujs).  It's small (~3.3k), and is intended to be useful anywhere, while
+taking advantage of Rails conventions and the jquery-ujs library when possible.
 
 It provides simple hooks for all the standard REST actions (index, show, new, create, edit, update, and destroy), and
 the ability to add and remove members (get, put, post, and delete actions) on a given resource.  It's important to note
@@ -59,9 +59,6 @@ might need it.  The best part is that this is just the simplest example.
 
 ## Installation
 
-- Download [jquery.resourcy.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery.resourcy.js) or [jquery.resourcy.min.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery.resourcy.min.js)
-- Put the files in your project use it wherever you might need it.
-
 ### Rails
 
     gem 'resourcy-rails'
@@ -69,6 +66,12 @@ might need it.  The best part is that this is just the simplest example.
 Then require resourcy (and jquery-ujs) in your application.js:
 
     //= require jquery.resourcy
+
+### Just the Javascripts?
+
+Grab [jquery.resourcy.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery.resourcy.js) or [jquery.resourcy.min.js](http://github.com/jejacks0n/resourcy/raw/master/distro/jquery.resourcy.min.js)
+and put it in your project.  If you're not using jQuery you can grab [resourcy.js](http://github.com/jejacks0n/resourcy/raw/master/distro/resourcy.js)
+and call it directly use `Resourcy.resource` instead of `$.resource`.
 
 
 ## Usage
@@ -230,10 +233,19 @@ Since Resourcy is basically a routing system it can be useful to see all of the 
 
     $.routes()
 
+
 ## Parting thoughts
 
 Resourcy isn't intended as a way to build complex javascript applications.  This is just another tool in your toolbox
 and should be used as such.  Frameworks like Spine.js and Backbone will give you a lot more functionality, but Resourcy
 is useful when used in the correct ways.
 
-## Enjoy. =)
+
+## License
+
+Licensed under the [MIT License](http://opensource.org/licenses/mit-license.php)
+
+Copyright 2012 [Jeremy Jackson](https://github.com/jejacks0n)
+
+
+## Enjoy =)
