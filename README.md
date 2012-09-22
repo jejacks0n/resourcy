@@ -1,6 +1,7 @@
 # Resourcy
 
 [![Build Status](https://secure.travis-ci.org/jejacks0n/resourcy.png)](http://travis-ci.org/jejacks0n/resourcy)
+[![Dependency Status](https://gemnasium.com/jejacks0n/resourcy.png)](https://gemnasium.com/jejacks0n/resourcy)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/jejacks0n/resourcy)
 
 Resourcy is a RESTful adapter that observes Ajax requests matching specific paths and methods and is meant to work with
