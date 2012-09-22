@@ -94,7 +94,7 @@ determineCallback = (resource, action, method, matchAction, matchIdOrAction) ->
 @Resourcy =
   removeAll: -> resources = {}
   handleRequest: handleRequest
-  noConflict: Resourcy.noConflict or -> delete(Resourcy)
+  noConflict: @Resourcy?.noConflict or -> delete(Resourcy)
 
   resources: (path, actions = {}) -> return createResource(path).add(actions)
   resource: (path, actions = {}) -> return createResource(path, true).add(actions)
