@@ -1,3 +1,16 @@
+###!
+Resourcy v1.1.0
+
+Resourcy is an unobtrusive RESTful adapter for jquery-ujs and Rails.
+
+Documentation and other useful information can be found at
+https://github.com/jejacks0n/resourcy
+
+Copyright (c) 2012 Jeremy Jackson
+
+https://raw.github.com/jejacks0n/resourcy/master/LICENSE
+###
+
 # resource list
 resources = {}
 
@@ -13,14 +26,18 @@ parseUrl = (url) ->
   path = url[9]?.match(/(\/.*)\/+(\w+)$/i) or []
   return scheme: url[2], credentials: url[5], host: url[6], port: url[8], path: url[9], action: path[2] or '', format: url[11], query: url[13], hash: url[15]
 
-createResource = (path, singular = false) =>
+createResource = (path, singular = false, defaults = {}) =>
   return resources[path] if resources[path]
   return resources[path] =
     path: new RegExp("^#{(if path[0] is '/' then path else "/#{path}").replace(/:\w+/ig, '(\\w+)')}/?(\\w+)?/?(\\w+)?/?($|\\?|\\.|#)", 'i')
     pathvars: (path.match(/:(\w+)/ig) or []).join('|').replace(/:/g, '').split('|') # todo: this seems wonky
     actions: {}
+    defaults: defaults
     singular: singular
     name: path.substr(path.lastIndexOf('/') + 1)
+    options: (defaults = {}) ->
+      @defaults = defaults
+      return @
     add: (action, callback) ->
       object = {}
       if typeof(action) is 'string' then object[action] = callback else object = action
@@ -60,15 +77,17 @@ addCallback = (method, action, callback) ->
 handleRequest = (method, url, options, original, optionsHandler) ->
   method = method.toLowerCase()
   {path, action} = urlParts = parseUrl(url)
+  defaults = {}
 
   proceeded = false
   proceed = (opts) ->
     proceeded = true
-    return original(url, optionsHandler(options or {}, opts or {}))
+    return original(url, optionsHandler(options or {}, opts or {}, defaults))
 
   for key, resource of resources
     continue unless matches = path.match(resource.path)
     if callback = determineCallback(resource, action, method, matches[matches.length - 2], matches[matches.length - 3])
+      defaults = resource.defaults
       vars = {}
       vars[pathvar] = matches[index + 1] for pathvar, index in resource.pathvars
       result = callback(proceed, vars, urlParts)
@@ -96,8 +115,8 @@ determineCallback = (resource, action, method, matchAction, matchIdOrAction) ->
   handleRequest: handleRequest
   noConflict: @Resourcy?.noConflict or -> delete(Resourcy)
 
-  resources: (path, actions = {}) -> return createResource(path).add(actions)
-  resource: (path, actions = {}) -> return createResource(path, true).add(actions)
+  resources: (path, defaults = {}, actions = {}) -> return createResource(path, false, defaults).add(actions)
+  resource: (path, defaults = {}, actions = {}) -> return createResource(path, true, defaults).add(actions)
   routes: ->
     routes = {}
     routes[resource.name] = resource.describe() for path, resource of resources

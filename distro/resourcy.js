@@ -1,5 +1,20 @@
+
+/*!
+Resourcy v1.1.0
+
+Resourcy is an unobtrusive RESTful adapter for jquery-ujs and Rails.
+
+Documentation and other useful information can be found at
+https://github.com/jejacks0n/resourcy
+
+Copyright (c) 2012 Jeremy Jackson
+
+https://raw.github.com/jejacks0n/resourcy/master/LICENSE
+*/
+
+
 (function() {
-  var actions, addCallback, createResource, descriptions, determineCallback, handleRequest, methods, parseUrl, resources,
+  var actions, addCallback, createResource, descriptions, determineCallback, handleRequest, methods, parseUrl, resources, _ref,
     _this = this;
 
   resources = {};
@@ -30,9 +45,12 @@
     };
   };
 
-  createResource = function(path, singular) {
+  createResource = function(path, singular, defaults) {
     if (singular == null) {
       singular = false;
+    }
+    if (defaults == null) {
+      defaults = {};
     }
     if (resources[path]) {
       return resources[path];
@@ -41,8 +59,16 @@
       path: new RegExp("^" + ((path[0] === '/' ? path : "/" + path).replace(/:\w+/ig, '(\\w+)')) + "/?(\\w+)?/?(\\w+)?/?($|\\?|\\.|#)", 'i'),
       pathvars: (path.match(/:(\w+)/ig) || []).join('|').replace(/:/g, '').split('|'),
       actions: {},
+      defaults: defaults,
       singular: singular,
       name: path.substr(path.lastIndexOf('/') + 1),
+      options: function(defaults) {
+        if (defaults == null) {
+          defaults = {};
+        }
+        this.defaults = defaults;
+        return this;
+      },
       add: function(action, callback) {
         var method, object, _ref;
         object = {};
@@ -113,13 +139,14 @@
   };
 
   handleRequest = function(method, url, options, original, optionsHandler) {
-    var action, callback, index, key, matches, path, pathvar, proceed, proceeded, resource, result, urlParts, vars, _i, _len, _ref, _ref1;
+    var action, callback, defaults, index, key, matches, path, pathvar, proceed, proceeded, resource, result, urlParts, vars, _i, _len, _ref, _ref1;
     method = method.toLowerCase();
     _ref = urlParts = parseUrl(url), path = _ref.path, action = _ref.action;
+    defaults = {};
     proceeded = false;
     proceed = function(opts) {
       proceeded = true;
-      return original(url, optionsHandler(options || {}, opts || {}));
+      return original(url, optionsHandler(options || {}, opts || {}, defaults));
     };
     for (key in resources) {
       resource = resources[key];
@@ -127,6 +154,7 @@
         continue;
       }
       if (callback = determineCallback(resource, action, method, matches[matches.length - 2], matches[matches.length - 3])) {
+        defaults = resource.defaults;
         vars = {};
         _ref1 = resource.pathvars;
         for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
@@ -177,20 +205,26 @@
       return resources = {};
     },
     handleRequest: handleRequest,
-    noConflict: Resourcy.noConflict || function() {
+    noConflict: ((_ref = this.Resourcy) != null ? _ref.noConflict : void 0) || function() {
       return delete Resourcy;
     },
-    resources: function(path, actions) {
+    resources: function(path, defaults, actions) {
+      if (defaults == null) {
+        defaults = {};
+      }
       if (actions == null) {
         actions = {};
       }
-      return createResource(path).add(actions);
+      return createResource(path, false, defaults).add(actions);
     },
-    resource: function(path, actions) {
+    resource: function(path, defaults, actions) {
+      if (defaults == null) {
+        defaults = {};
+      }
       if (actions == null) {
         actions = {};
       }
-      return createResource(path, true).add(actions);
+      return createResource(path, true, defaults).add(actions);
     },
     routes: function() {
       var path, resource, routes;

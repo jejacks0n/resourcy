@@ -135,6 +135,14 @@ anything for posts, you don't have to declare it as a resource itself.
 
     $.resources('my_blog/admin/posts')
 
+#### Default options
+
+You can add default options for a given resource.  For example you may want to tell the resource to always request
+using the html format, or setting a header.
+
+    $.resources('posts', dataType: 'html', headers: {X_PJAX: true})
+    # or $.resources('posts').options(dataType: 'html', headers: {X_PJAX: true})
+
 ### Singular resources
 
 Singular resources work the same way, but are added using the `resource` (singular) method.  The only real difference
@@ -170,6 +178,14 @@ You can add actions and members to a given resource by using the `add` method (w
       destroy: ->
       'put:upvote': ->
       'put:downvote': ->
+
+You can also pass the actions as an object to the `resource` and `resources` methods.  Here's an example of creating a
+resource with default ajax options and new/create actions on it.
+
+    $.resources 'posts', {dataType: 'html'},
+      new: ->
+      create: ->
+
 
 ### Removing actions
 

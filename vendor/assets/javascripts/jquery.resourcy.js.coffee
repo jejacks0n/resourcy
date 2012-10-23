@@ -14,8 +14,8 @@ handleRequest = Resourcy.handleRequest
 Resourcy.noConflict()
 
 # Define an options handler, that properly merges options for the Ajax request.
-optionsHandler = (opts1, opts2) ->
-  options = jQuery.extend(true, {}, opts1, opts2)
+optionsHandler = (opts1, opts2, defaults = {}) ->
+  options = jQuery.extend(true, {}, opts1, opts2, defaults)
   for method in ['beforeSend', 'error', 'dataFilter', 'success', 'complete']
     if opts1[method] && opts2[method]
       c1 = opts1[method]

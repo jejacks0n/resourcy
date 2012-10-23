@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   # General Gem Information
   s.name        = 'resourcy-rails'
-  s.date        = '2012-10-22'
+  s.date        = '2012-10-23'
   s.version     = Resourcy::VERSION
   s.authors     = ['Jeremy Jackson']
   s.email       = ['jejacks0n@gmail.com']
