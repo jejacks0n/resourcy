@@ -1,4 +1,2 @@
-module Resourcy
-  require 'resourcy/version'
-  require 'resourcy/engine'
-end
+require 'resourcy/version'
+require 'resourcy/engine'

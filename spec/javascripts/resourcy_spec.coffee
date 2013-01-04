@@ -1,4 +1,4 @@
-require '/assets/resourcy.js'
+#= require resourcy
 
 describe "Resourcy", ->
 

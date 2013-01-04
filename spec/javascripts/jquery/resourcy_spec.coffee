@@ -1,6 +1,6 @@
-require '/assets/jquery-1.8.0.js'
-require '/assets/jquery.resourcy.js'
-require '/assets/jquery_ujs.js'
+#= require jquery-1.8.0
+#= require jquery.resourcy
+#= require jquery_ujs
 
 describe "Resourcy jQuery Adapter (1.8.0)", ->
 
@@ -371,7 +371,7 @@ describe "Resourcy jQuery Adapter (1.8.0)", ->
 
   describe "using UJS", ->
 
-    template 'ujs.html'
+    fixture.load 'ujs.html'
 
     beforeEach ->
       @resource = $.resources('posts')
