@@ -1,6 +1,5 @@
 # Resourcy
 
-[![Gem Version](https://img.shields.io/gem/v/resourcy.svg)](https://rubygems.org/gems/resourcy)
 [![Build Status](https://secure.travis-ci.org/jejacks0n/resourcy.png)](http://travis-ci.org/jejacks0n/resourcy)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
