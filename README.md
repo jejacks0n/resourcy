@@ -1,8 +1,8 @@
 # Resourcy
 
+[![Gem Version](https://img.shields.io/gem/v/resourcy.svg)](https://rubygems.org/gems/resourcy)
 [![Build Status](https://secure.travis-ci.org/jejacks0n/resourcy.png)](http://travis-ci.org/jejacks0n/resourcy)
-[![Dependency Status](https://gemnasium.com/jejacks0n/resourcy.png)](https://gemnasium.com/jejacks0n/resourcy)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/jejacks0n/resourcy)
+[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
 Resourcy is a RESTful adapter that observes Ajax requests matching specific paths and methods and is meant to work with
 [jquery-ujs](https://github.com/rails/jquery-ujs).  It's small (~3.3k), and is intended to be useful anywhere, while
